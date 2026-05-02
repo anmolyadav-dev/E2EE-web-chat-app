@@ -17,9 +17,9 @@ export const SocketContextProvider = ({ children }) => {
     if (authUser && encryptionKeys) {
       console.log("Initializing socket connection with user:", authUser._id);
       
-      // Connect to localhost in development, production URL in production
+      // Connect to localhost in development, relative path in production
       const socketUrl = import.meta.env.PROD 
-        ? "https://react-chat-app-1-54y0.onrender.com/"
+        ? "/"
         : "http://localhost:5000";
       
       const newSocket = io(socketUrl, {
