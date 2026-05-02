@@ -10,41 +10,40 @@ const Conversation = ({ conversation, lastIdx }) => {
   const isOnline = onlineUsers?.includes(conversation._id);
   
   return (
-    <>
-      <div
-        className={`flex gap-3 items-center p-3 rounded-xl cursor-pointer transition-all duration-300 ${
-          isSelected 
-            ? "bg-gradient-to-r from-purple-600/30 to-blue-600/30 border border-white/20" 
-            : "hover:bg-white/10 border border-transparent"
-        }`}
-        onClick={() => setSelectedConversation(conversation)}
-      >
-        <div className={`avatar ${isOnline ? "online" : "offline"} relative`}>
-          <div className="w-12 rounded-full ring-2 ring-white/20">
-            <img
-              src={conversation.avatar}
-              alt={conversation.username}
-              className="object-cover"
-            />
-          </div>
-          {isOnline && (
-            <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-400 rounded-full border-2 border-white/20"></div>
-          )}
+    <div
+      className={`flex gap-3 items-center p-2 mx-2 mb-1 rounded-[4px] cursor-pointer transition-none ${
+        isSelected 
+          ? "bg-[#3F4147] text-white" 
+          : "text-[#949BA4] hover:bg-[#35373C] hover:text-gray-200"
+      }`}
+      onClick={() => setSelectedConversation(conversation)}
+    >
+      <div className={`avatar ${isOnline ? "online" : "offline"} relative`}>
+        <div className="w-8 h-8 rounded-full">
+          <img
+            src={conversation.avatar}
+            alt={conversation.username}
+            className="object-cover"
+          />
         </div>
-
-        <div className="flex flex-col flex-1">
-          <div className="flex items-center justify-between">
-            <p className="font-semibold text-white">{conversation.fullName}</p>
-            <div className="flex items-center text-green-400">
-              <FaLock className="text-xs" />
-            </div>
-          </div>
-          <p className="text-gray-400 text-sm">@{conversation.username}</p>
-        </div>
+        {isOnline && (
+          <div className="absolute bottom-0 right-0 w-3 h-3 bg-[#23a559] rounded-full border-2 border-[#2B2D31]"></div>
+        )}
       </div>
 
-      {!lastIdx && <div className="h-px bg-white/10 my-2" />}
-    </>
+      <div className="flex flex-col flex-1 overflow-hidden">
+        <div className="flex items-center justify-between">
+          <p className="font-medium truncate text-sm">
+            {conversation.fullName}
+          </p>
+          {isSelected && (
+            <div className="flex items-center text-gray-400">
+              <FaLock className="text-[10px]" />
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
   );
 };
 

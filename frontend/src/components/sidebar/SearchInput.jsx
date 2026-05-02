@@ -26,16 +26,16 @@ const SearchInput = () => {
     }
   };
   return (
-    <form className="flex items-center gap-2" onSubmit={handleSubmit}>
+    <form className="w-full relative" onSubmit={handleSubmit}>
       <input
         type="text"
-        placeholder="Search…"
-        className="input input-bordered rounded-full"
-        value={search}
+        placeholder="Find or start a conversation"
+        className="w-full bg-[#1E1F22] text-gray-200 text-sm placeholder-gray-400 rounded-[4px] px-2 py-1.5 focus:outline-none focus:ring-0 shadow-inner"
+        value={search || ""}
         onChange={(e) => setSearch(e.target.value)}
       />
-      <button type="submit" className="btn btn-circle bg-sky-500 text-white">
-        <IoSearchSharp className="w-6 h-6 outline-none" />
+      <button type="submit" className="absolute right-2 top-1.5 text-gray-400 hover:text-gray-200">
+        <IoSearchSharp className="w-4 h-4" />
       </button>
     </form>
   );

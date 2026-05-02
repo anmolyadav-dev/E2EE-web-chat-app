@@ -22,19 +22,15 @@ export const signupUser = async (req, res) => {
     const { privateKey, publicKey } = encryption.generateKeyPair();
 
     // random user Avatar - API
-    // https://avatar-placeholder.iran.liara.run
-    // https://avatar.iran.liara.run/public/boy
-    // https://avatar.iran.liara.run/public/boy?username = ""
-
-    const boyAvatar = `https://avatar.iran.liara.run/public/boy?username=${username}`;
-    const girlAvatar = `https://avatar.iran.liara.run/public/girl?username=${username}`;
+    // Using DiceBear API for stable, high-quality avatars
+    const avatarUrl = `https://api.dicebear.com/9.x/avataaars/svg?seed=${username}`;
 
     const newUser = new User({
       fullName: fullName,
       username: username,
       password: hashedPassword,
       gender: gender,
-      avatar: gender === "male" ? boyAvatar : girlAvatar,
+      avatar: avatarUrl,
       encryptionKeys: {
         privateKey,
         publicKey,

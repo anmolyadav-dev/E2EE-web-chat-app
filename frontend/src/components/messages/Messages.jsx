@@ -21,10 +21,10 @@ const Messages = () => {
   }, [loading, messages]);
   
   return (
-    <div className="flex-1 overflow-y-auto px-6 py-4 space-y-4">
+    <div className="flex-1 overflow-y-auto px-0 py-4 space-y-0 custom-scrollbar">
       {/* Show loading skeleton */}
       {loading && (
-        <div className="space-y-4">
+        <div className="space-y-4 px-4">
           {[...Array(4)].map((_, idx) => <MessageSkeleton key={idx} />)}
         </div>
       )}
@@ -44,7 +44,7 @@ const Messages = () => {
       {/* Show empty state when not loading and no messages */}
       {!loading && (!messages || messages.length === 0) && (
         <div className="flex items-center justify-center h-full">
-          <p className="text-gray-400 text-center bg-white/5 backdrop-blur-sm rounded-lg px-6 py-4 border border-white/10">
+          <p className="text-gray-400 text-center px-6 py-4">
             Send a message to start the conversation
           </p>
         </div>

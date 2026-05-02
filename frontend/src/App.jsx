@@ -18,8 +18,8 @@ function App() {
   }
   
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900">
-      <div className="flex items-center justify-center min-h-screen p-4">
+    <div className="min-h-screen bg-[#1E1F22] overflow-hidden">
+      <div className={`flex items-center justify-center min-h-screen ${!authUser ? "p-4" : ""}`}>
         <Routes>
           <Route
             path="/"
@@ -40,19 +40,21 @@ function App() {
         toastOptions={{
           duration: 3000,
           style: {
-            background: '#1f2937',
+            background: '#313338',
             color: '#fff',
-            border: '1px solid #374151',
+            border: 'none',
+            borderRadius: '4px',
+            boxShadow: '0 8px 16px rgba(0,0,0,0.24)'
           },
           success: {
             iconTheme: {
-              primary: '#10b981',
+              primary: '#23a559',
               secondary: '#fff',
             },
           },
           error: {
             iconTheme: {
-              primary: '#ef4444',
+              primary: '#da373c',
               secondary: '#fff',
             },
           },

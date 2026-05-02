@@ -3,27 +3,50 @@
 @tailwind utilities;
 
 body {
-  background: linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.6)),
-    url("/backgroundImage/bg.jpg");
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position: center;
+  background-color: #1E1F22;
+  color: #DBDEE1;
+  font-family: 'gg sans', 'Noto Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
 }
-dark mode looking scrollbar ::-webkit-scrollbar {
+
+/* Base Scrollbar */
+::-webkit-scrollbar {
   width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #555;
+  background: transparent;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #121212;
-  border-radius: 5px;
+  background: #1A1B1E;
+  border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #242424;
+  background: #2B2D31;
+}
+
+/* Custom Scrollbar specifically for inner containers */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #2B2D31;
+  border-radius: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #1A1B1E;
+  border-radius: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #111214;
 }
 
 /* SHAKE ANIMATION ON HORIZONTAL DIRECTION */

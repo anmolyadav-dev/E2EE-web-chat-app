@@ -31,29 +31,37 @@ const Message = ({ message }) => {
   }, [message]);
   
   return (
-    <div className={`chat ${chatClassName}`}>
-      <div className="chat-image avatar">
-        <div className="w-10 rounded-full">
-          <img 
-            src={profilePic || "/default-avatar.png"} 
-            alt="Avatar" 
-            onError={(e) => {
-              e.target.src = "/default-avatar.png";
-            }}
-          />
-        </div>
+    <div className={`flex gap-4 px-4 py-1 hover:bg-[#2E3035] mt-1 ${shakeClass}`}>
+      <div className="flex-shrink-0 pt-1">
+        <img 
+          src={profilePic || "https://ui-avatars.com/api/?name=User&background=313338&color=fff"} 
+          alt="Avatar" 
+          className="w-10 h-10 rounded-full object-cover"
+          onError={(e) => {
+            e.target.onerror = null;
+            e.target.src = "https://ui-avatars.com/api/?name=User&background=313338&color=fff";
+          }}
+        />
       </div>
 
-      <div 
-        className={`chat-bubble text-white ${bubbleBgColor} ${shakeClass} break-words max-w-xs lg:max-w-md`}
-      >
-        {message.message || <span className="text-gray-400 italic">Empty message</span>}
-      </div>
-      <div className="chat-footer opacity-50 text-xs flex gap-1 items-center">
-        {formattedTime}
-        {message.isEncrypted && (
-          <span className="text-green-400" title="Encrypted message">🔒</span>
-        )}
+      <div className="flex flex-col min-w-0">
+        <div className="flex items-baseline gap-2">
+          <span className="font-medium text-gray-100 text-sm md:text-base">
+            {fromMe ? authUser.fullName : selectedConversation?.fullName}
+          </span>
+          <span className="text-xs text-gray-400">
+            {formattedTime}
+          </span>
+          {message.isEncrypted && (
+            <span className="text-[#23a559] text-[10px]" title="Encrypted message">
+              🔒
+            </span>
+          )}
+        </div>
+        
+        <div className="text-gray-300 text-sm md:text-base break-words leading-relaxed">
+          {message.message || <span className="text-gray-500 italic">Empty message</span>}
+        </div>
       </div>
     </div>
   );
