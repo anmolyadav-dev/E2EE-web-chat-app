@@ -19,32 +19,67 @@ class RedisClient {
 
   async connect() {
     try {
-      const redisUrl = process.env.REDIS_URL || 
-                       (process.env.REDISHOST ? `redis://default:${process.env.REDISPASSWORD}@${process.env.REDISHOST}:${process.env.REDISPORT}` : 'redis://localhost:6379');
+      let redisUrl;
 
-      // Mask password for logging
+      if (process.env.REDIS_URL) {
+        redisUrl = process.env.REDIS_URL;
+      } else if (process.env.REDISHOST) {
+        const username = process.env.REDISUSER || 'default';
+        const password = process.env.REDISPASSWORD || '';
+        const host = process.env.REDISHOST;
+        const port = process.env.REDISPORT || 6379;
+
+        redisUrl = `redis://${username}:${password}@${host}:${port}`;
+      } else {
+        redisUrl = 'redis://127.0.0.1:6379';
+      }
+
+      // Fix accidental double protocol
+      redisUrl = redisUrl.replace(/^redis(redis:\/\/)/, 'redis://');
+
+      // Mask password for logs
       const logUrl = redisUrl.replace(/:[^:@]+@/, ':****@');
-      console.log(`Attempting to connect to Redis at: ${logUrl}`);
+      console.log(`Connecting to Redis → ${logUrl}`);
 
       this.client = createClient({
         url: redisUrl,
-        socket: redisUrl.startsWith('rediss://') ? { tls: true } : {}
+        socket: {
+          tls: redisUrl.startsWith('rediss://'),
+          reconnectStrategy: (retries) => {
+            if (retries > 5) {
+              console.error('Redis reconnect failed after 5 attempts');
+              return new Error('Retry limit reached');
+            }
+            return Math.min(retries * 200, 2000); // exponential backoff
+          },
+          connectTimeout: 10000
+        }
       });
 
       this.client.on('error', (err) => {
-        console.error('Redis Client Error:', err);
+        console.error('❌ Redis Error:', err.message);
         this.isConnected = false;
       });
 
       this.client.on('connect', () => {
-        console.log('Redis Client Connected');
+        console.log('🔌 Redis Connected');
         this.isConnected = true;
       });
 
+      this.client.on('reconnecting', () => {
+        console.log('♻️ Redis reconnecting...');
+      });
+
       await this.client.connect();
+
+      // Health check
+      await this.client.ping();
+      console.log('✅ Redis ready');
+
       return true;
+
     } catch (error) {
-      console.error('Failed to connect to Redis:', error);
+      console.error('❌ Redis connection failed:', error.message);
       this.isConnected = false;
       return false;
     }
@@ -84,7 +119,7 @@ class RedisClient {
   // Cache messages for a conversation
   async cacheMessages(conversationId, messages) {
     if (!this.isConnected) return false;
-    
+
     try {
       const cacheKey = `messages:${conversationId}`;
       // Store messages as JSON string with TTL
@@ -100,17 +135,17 @@ class RedisClient {
   // Get cached messages for a conversation
   async getCachedMessages(conversationId) {
     if (!this.isConnected) return null;
-    
+
     try {
       const cacheKey = `messages:${conversationId}`;
       const cached = await this.client.get(cacheKey);
-      
+
       if (cached) {
         const messages = JSON.parse(cached);
         console.log(`Retrieved ${messages.length} cached messages for conversation ${conversationId}`);
         return messages;
       }
-      
+
       return null;
     } catch (error) {
       console.error('Failed to get cached messages:', error);
@@ -162,7 +197,7 @@ class RedisClient {
       if (current === 1) {
         await this.client.expire(key, Math.ceil(windowMs / 1000));
       }
-      
+
       const ttl = await this.client.ttl(key);
       return {
         allowed: current <= maxRequests,
