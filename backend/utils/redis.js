@@ -19,8 +19,16 @@ class RedisClient {
 
   async connect() {
     try {
+      const redisUrl = process.env.REDIS_URL || 
+                       (process.env.REDISHOST ? `redis://default:${process.env.REDISPASSWORD}@${process.env.REDISHOST}:${process.env.REDISPORT}` : 'redis://localhost:6379');
+
+      // Mask password for logging
+      const logUrl = redisUrl.replace(/:[^:@]+@/, ':****@');
+      console.log(`Attempting to connect to Redis at: ${logUrl}`);
+
       this.client = createClient({
-        url: process.env.REDIS_URL || 'redis://localhost:6379'
+        url: redisUrl,
+        socket: redisUrl.startsWith('rediss://') ? { tls: true } : {}
       });
 
       this.client.on('error', (err) => {
