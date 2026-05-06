@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import { useSocketContext } from "../context/SocketContext";
 
 const useGetConversations = () => {
   const [loading, setLoading] = useState(false);
@@ -23,6 +24,27 @@ const useGetConversations = () => {
     };
     getConversation();
   }, []);
+
+  const { socket } = useSocketContext();
+
+  useEffect(() => {
+    if (socket) {
+      const handleNewUser = (newUser) => {
+        setConversations((prev) => {
+          // Prevent adding duplicate user if they're already in the list
+          if (prev.some(user => user._id === newUser._id)) return prev;
+          return [...prev, newUser];
+        });
+      };
+      
+      socket.on("newUser", handleNewUser);
+      
+      return () => {
+        socket.off("newUser", handleNewUser);
+      };
+    }
+  }, [socket]);
+
   return { loading, conversations };
 };
 

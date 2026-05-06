@@ -2,6 +2,7 @@ import User from "../models/user.model.js";
 import bcrypt from "bcryptjs";
 import generateTokenAndSetCookie from "../utils/generateJwt.js";
 import encryption from "../utils/encryption.js";
+import { io } from "../socket/socket.js";
 
 export const signupUser = async (req, res) => {
   try {
@@ -38,10 +39,18 @@ export const signupUser = async (req, res) => {
     });
 
     if (newUser) {
-      // generate jwt token and set cookie
       generateTokenAndSetCookie(newUser._id, res);
 
       await newUser.save();
+      
+      // Emit new user to all connected clients
+      io.emit("newUser", {
+        _id: newUser._id,
+        fullName: newUser.fullName,
+        username: newUser.username,
+        avatar: newUser.avatar,
+      });
+
       res.status(201).json({
         _id: newUser._id,
         fullName: newUser.fullName,
